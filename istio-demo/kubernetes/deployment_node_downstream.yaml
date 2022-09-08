@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: node-downstream-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-downstream-service
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-downstream-service
+  template:
+    metadata:
+      labels:
+        app: node-downstream-service
+        version: v1
+    spec:
+      serviceAccountName: node-downstream-service
+      containers:
+      - name: node-downstream
+        image: shubham8955701054/nodedown
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-downstream-service
+spec:
+  ports:
+  - port: 6000
+    targetPort: 6000
+    protocol: TCP
+    name: http
+  selector:
+    app: node-downstream-service

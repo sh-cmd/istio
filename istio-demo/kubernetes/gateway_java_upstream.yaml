@@ -1,0 +1,33 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway-java-upstream
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: java-upstream-vs
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - gateway-java-upstream
+  http:
+  - match:
+    - uri:
+        prefix: /server/hello
+    route:
+    - destination:
+        host: java-upstream-service
+        port:
+          number: 7092
