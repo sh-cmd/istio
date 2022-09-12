@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: blog-backend-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blog-backend-service
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blog-backend-service
+  template:
+    metadata:
+      labels:
+        app: blog-backend-service
+        version: v1
+    spec:
+      serviceAccountName: blog-backend-service
+      containers:
+      - name: blog-backend-service
+        image: shubham8955701054/blog-backend-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blog-backend-service
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+  selector:
+    app: blog-backend-service

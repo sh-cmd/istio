@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: blog-mysql-db
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blog-mysql-db
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blog-mysql-db
+  template:
+    metadata:
+      labels:
+        app: blog-mysql-db
+        version: v1
+    spec:
+      serviceAccountName: blog-mysql-db
+      containers:
+      - name: blog-mysql-db
+        image: shubham8955701054/blog-mysql-db
+        env:
+          # Use secret in real usage
+        - name: MYSQL_ROOT_PASSWORD
+          value: mysqlpw
+        ports:
+        - containerPort: 3306
+          name: mysql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blog-mysql-db
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+    protocol: TCP
+  selector:
+    app: blog-mysql-db

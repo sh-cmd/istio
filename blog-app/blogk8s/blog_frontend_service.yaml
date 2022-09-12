@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: blog-frontend-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blog-frontend-service
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blog-frontend-service
+  template:
+    metadata:
+      labels:
+        app: blog-frontend-service
+        version: v1
+    spec:
+      serviceAccountName: blog-frontend-service
+      containers:
+      - name: blog-frontend-service
+        image: shubham8955701054/blog-frontend-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blog-frontend-service
+spec:
+  ports:
+  - port: 3000
+    targetPort: 3000
+    protocol: TCP
+  selector:
+    app: blog-frontend-service
